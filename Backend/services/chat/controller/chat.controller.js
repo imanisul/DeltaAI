@@ -66,7 +66,7 @@ export const savedMessage = async (req, res) => {
     try {
         const {conversationId, role, content} = req.body;
         const message = await Message.create({
-            conversionId,
+            conversionId: conversationId,
             content,
             role
         });
@@ -81,8 +81,8 @@ export const savedMessage = async (req, res) => {
 export const getMessages = async (req, res) => {
     try {
         const messages = await Message.find({
-            conversationId:req.params.conversationId
-        }).sort({createAt:-1});
+            conversionId: req.params.conversationId
+        }).sort({createdAt:-1});
         return res.status(200).json(messages);
     } catch (error) {
         return res.status(500).json({
