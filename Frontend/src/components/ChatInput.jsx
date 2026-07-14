@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 
 import {Mic, Paperclip, Send} from 'lucide-react';
+import sendMessage from '../features/sendMessage';
+import { useSelector } from 'react-redux';
 
 function ChatInput() {
 
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState("");
+  const { selectedConversation } = useSelector(
+    (state) => state.conversation
+  );
+  const handleSendMessage = async () => {
+    const payload = {
+      prompt:value.trim(),
+      conversationId:selectedConversation?._id
+    }
+    const data = await sendMessage(payload);
+    console.log(data)
+  }
+
   return (
     <div className='w-full overflow-hidden px-3 md:px-5 py-4 border-t border-white/[0.06] bg-[#0d0f14]'>
       <div className='flex flex-col gap-2 bg-white/[0.03] border border-white/[0.07]
@@ -35,6 +49,7 @@ function ChatInput() {
 
           <button 
           disabled={!value}
+          onClick={handleSendMessage}
           className={`flex items-center justify-center w-8 h-8 rounded-lg border-none cursor-pointer 
           transition-all duration-150 ${value.trim() ? "bg-linear-to-br from-indigo-500 to-violet-700 hover:opacity-90 text-white":
             "bg-white/[0.05] text-slate-600 cursor-not-allowed"}`}>
