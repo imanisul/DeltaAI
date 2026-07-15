@@ -2,21 +2,42 @@ import React, { useState } from 'react';
 
 import {Mic, Paperclip, Send} from 'lucide-react';
 import sendMessage from '../features/sendMessage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessages, addMessage, setIsLoading } from '../redux/messageSlice.js';
+import getMessages from '../features/getMessages.js';
 
 function ChatInput() {
 
   const [value, setValue] = useState("");
+  const dispatch = useDispatch();
   const { selectedConversation } = useSelector(
     (state) => state.conversation
   );
   const handleSendMessage = async () => {
+    const promptText = value.trim();
+    if (!promptText) return;
+
     const payload = {
-      prompt:value.trim(),
+      prompt: promptText,
       conversationId:selectedConversation?._id
     }
+    
+    dispatch(addMessage({
+        _id: Date.now().toString(),
+        role: 'user',
+        content: promptText
+    }));
+
+    setValue("");
+    dispatch(setIsLoading(true));
     const data = await sendMessage(payload);
     console.log(data)
+
+    if (selectedConversation?._id) {
+        const fetchedMessages = await getMessages(selectedConversation._id);
+        dispatch(setMessages(fetchedMessages));
+    }
+    dispatch(setIsLoading(false));
   }
 
   return (
@@ -26,7 +47,7 @@ function ChatInput() {
 
         <textarea
         onChange={(e)=>setValue(e.target.value)}
-        value={value.trim()}
+        value={value}
         placeholder='What are you looking for?'
         className='w-full bg-transparent outline-none text-[14px] text-slate-200 placeholder:text-slate-600
         leading-relaxed [scrollbar-width:none] [&::-webkit-scrollbar]:hidden disabled:opacity-50' rows={3}

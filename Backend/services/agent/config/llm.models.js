@@ -2,7 +2,7 @@ import { ChatGroq } from "@langchain/groq";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const groq = new ChatGroq({
-    model: "openai/gpt-oss-120b",
+    model: "llama-3.1-8b-instant",
     temperature: 0,
     maxTokens: undefined,
     maxRetries: 2,
@@ -20,16 +20,16 @@ const gemini = new ChatGoogleGenerativeAI({
 export const getModel = (agent) => {
     switch (agent) {
         case "chat":
-            return groq;
+            return gemini;
         
         case "search":
-            return groq;
+            return gemini;
         
         case "coding":
             return gemini;
             
     
         default:
-            groq;
+            return gemini;
     }
 }

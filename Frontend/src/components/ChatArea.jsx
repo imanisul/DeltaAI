@@ -16,7 +16,7 @@ function ChatArea() {
   useEffect(()=> {
     const getMesg = async () => {
       if(selectedConversation){
-      const {data} =  getMessages(selectedConversation?._id)
+      const data = await getMessages(selectedConversation?._id)
 
       dispatch(setMessages(data))
       }

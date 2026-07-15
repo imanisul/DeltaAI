@@ -6,7 +6,7 @@ import MessageBubble from './MessageBubble.jsx';
 function MessageList() {
 
   const {selectedConversation} = useSelector(state=>state.conversation);
-   const {messages} = useSelector(state=>state.messages);
+   const {messages, isLoading} = useSelector(state=>state.messages);
 
 
   return (
@@ -30,11 +30,22 @@ function MessageList() {
         </div>
       ):
           <div>
-              {messages?.map((msg, i) => {
-                  <div>
+              {messages?.map((msg, i) => (
+                  <div key={i}>
                     <MessageBubble role={msg?.role} content={msg?.content}/>
                   </div>
-              })}
+              ))}
+              {isLoading && (
+                  <div className="flex w-full mb-4 justify-start animate-fade-in-up">
+                      <div className="max-w-[80%] rounded-2xl px-4 py-3 text-[14px] bg-white/[0.05] text-slate-200 border border-white/[0.05]">
+                          <div className="flex space-x-1.5 items-center h-5">
+                              <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '-0.3s'}}></div>
+                              <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '-0.15s'}}></div>
+                              <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                          </div>
+                      </div>
+                  </div>
+              )}
           </div>
       }
         
