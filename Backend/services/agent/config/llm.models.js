@@ -18,18 +18,21 @@ const gemini = new ChatGoogleGenerativeAI({
 });
 
 export const getModel = (agent) => {
+    const modelWithFallback = gemini.withFallbacks({
+        fallbacks: [groq]
+    });
+
     switch (agent) {
         case "chat":
-            return gemini;
+            return modelWithFallback;
         
         case "search":
-            return gemini;
+            return modelWithFallback;
         
         case "coding":
-            return gemini;
+            return modelWithFallback;
             
-    
         default:
-            return gemini;
+            return modelWithFallback;
     }
 }

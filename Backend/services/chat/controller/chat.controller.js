@@ -80,11 +80,18 @@ export const savedMessage = async (req, res) => {
 
 export const getMessages = async (req, res) => {
     try {
+        if (!req.params.conversationId || req.params.conversationId === 'undefined' || req.params.conversationId === 'null') {
+            return res.status(200).json([]);
+        }
+
         const messages = await Message.find({
             conversionId: req.params.conversationId
         }).sort({createdAt: 1});
         return res.status(200).json(messages);
     } catch (error) {
+        if (error.name === 'CastError') {
+             return res.status(400).json({ message: 'Invalid conversation ID format' });
+        }
         return res.status(500).json({
             message: `Error Finding Message ${error}`
         })

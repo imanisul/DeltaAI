@@ -7,7 +7,7 @@ async function sendMessage(payload) {
         const {data} = await api.post("/api/agent/chat", payload);
         return data;
     } catch (error) {
-        console.log(error);
+        console.error("SendMessage Error:", JSON.stringify(error?.response?.data || error, null, 2));
         return null;
     }
 

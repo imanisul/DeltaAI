@@ -5,6 +5,9 @@ import sendMessage from '../features/sendMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMessages, addMessage, setIsLoading } from '../redux/messageSlice.js';
 import getMessages from '../features/getMessages.js';
+import { createConversation } from '../features/createConversion.js';
+import { addConversation, setConversation, setConversationTitle, setSelectedConversation } from '../redux/conversationSlice.js';
+import { updateConversation } from '../features/updateConversation.js';
 
 function ChatInput() {
 
@@ -14,12 +17,28 @@ function ChatInput() {
     (state) => state.conversation
   );
   const handleSendMessage = async () => {
+      let conversation = selectedConversation
+    if(!conversation){
+      
+      const conv = await createConversation();
+      dispatch(setSelectedConversation(conv));
+      dispatch(addConversation(conv))
+       conversation = conv
+    };
+
+    if(conversation.title == "New Chat"){
+       await updateConversation({id:conversation?._id,title:value.trim()});
+
+       dispatch(setConversationTitle({conversationId: conversation?._id, title:value.slice(0,40)}))
+    }
+
+
     const promptText = value.trim();
     if (!promptText) return;
 
     const payload = {
       prompt: promptText,
-      conversationId:selectedConversation?._id
+      conversationId:conversation?._id
     }
     
     dispatch(addMessage({
@@ -33,8 +52,8 @@ function ChatInput() {
     const data = await sendMessage(payload);
     console.log(data)
 
-    if (selectedConversation?._id) {
-        const fetchedMessages = await getMessages(selectedConversation._id);
+    if (conversation?._id) {
+        const fetchedMessages = await getMessages(conversation._id);
         dispatch(setMessages(fetchedMessages));
     }
     dispatch(setIsLoading(false));
